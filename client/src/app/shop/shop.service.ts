@@ -1,11 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { IBrand } from '../shared/models/brands';
 import { IPagination } from '../shared/models/pagination';
 import { IProduct } from '../shared/models/product';
 import { IType } from '../shared/models/productType';
-import { delay, map } from 'rxjs/operators';
 import { ShopParams } from '../shared/models/shopParams';
 
 @Injectable({
@@ -13,7 +13,7 @@ import { ShopParams } from '../shared/models/shopParams';
 })
 export class ShopService
 {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.BaseApiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -42,7 +42,7 @@ export class ShopService
     params = params.append('PageSize', shopParams.pageSize.toString());
 
 
-    return this.http.get<IPagination<IProduct>>(this.baseUrl + 'products', { observe: 'body', params })
+    return this.http.get<IPagination<IProduct>>(this.baseUrl + environment.productsEndpoint, { observe: 'body', params })
     // .pipe(
     //   delay(1000),
     //   map(response =>
@@ -54,12 +54,12 @@ export class ShopService
 
   getBrands(): Observable<IBrand[]>
   {
-    return this.http.get<IBrand[]>(this.baseUrl + 'products/brands')
+    return this.http.get<IBrand[]>(this.baseUrl + environment.BrandsEndpoint)
   }
 
 
   getProductTypes(): Observable<IType[]>
   {
-    return this.http.get<IType[]>(this.baseUrl + 'products/types')
+    return this.http.get<IType[]>(this.baseUrl + environment.TypesEndpoint)
   }
 }
