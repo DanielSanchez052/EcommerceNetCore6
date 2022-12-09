@@ -52,11 +52,14 @@ export class ShopService
     // )
   }
 
+  getProduct(id: number){
+    return this.http.get<IProduct>(this.baseUrl+environment.productsEndpoint+id);
+  }
+
   getBrands(): Observable<IBrand[]>
   {
     return this.http.get<IBrand[]>(this.baseUrl + environment.BrandsEndpoint)
   }
-
 
   getProductTypes(): Observable<IType[]>
   {
