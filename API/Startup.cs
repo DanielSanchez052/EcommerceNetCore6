@@ -35,6 +35,9 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.UseMiddleware<ExcepcionMiddleware>();
+
+
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseStaticFiles();
@@ -48,7 +51,6 @@ public class Startup
         });
 
         app.UseSwaggerDocumentation();
-        app.UseMiddleware<ExcepcionMiddleware>();
 
         app.UseStatusCodePagesWithReExecute("/errors/{0}");
     }
