@@ -42,7 +42,7 @@ export class ShopService
     params = params.append('PageSize', shopParams.pageSize.toString());
 
 
-    return this.http.get<IPagination<IProduct>>(this.baseUrl + environment.productsEndpoint, { observe: 'body', params })
+    return this.http.get<IPagination<IProduct>>(`${this.baseUrl}${environment.productsEndpoint}`, { observe: 'body', params })
     // .pipe(
     //   delay(1000),
     //   map(response =>
@@ -53,7 +53,7 @@ export class ShopService
   }
 
   getProduct(id: number){
-    return this.http.get<IProduct>(this.baseUrl+environment.productsEndpoint+id);
+    return this.http.get<IProduct>(`${this.baseUrl}${environment.productsEndpoint}/${id}`);
   }
 
   getBrands(): Observable<IBrand[]>
