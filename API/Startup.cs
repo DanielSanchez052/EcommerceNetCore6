@@ -2,6 +2,7 @@ using API.Extensions;
 using API.Middleware;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace API;
 
@@ -16,6 +17,13 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+
+        services.AddSingleton<IConnectionMultiplexer>(c =>
+        {
+            var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);         
+            return ConnectionMultiplexer.Connect(configuration);
+        });
+
         services.AddApplicationServices();
 
         //Entity Framework
@@ -28,7 +36,10 @@ public class Startup
         {
             options.AddPolicy("CorsPolicy", policy =>
             {
-                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(
+                    "https://localhost:4200",
+                    "http://localhost:4200"
+                    );
             });
         });
     }

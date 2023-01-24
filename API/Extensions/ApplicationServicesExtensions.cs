@@ -13,8 +13,9 @@ namespace API.Extensions
     public static class ApplicationServicesExtensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
+        { 
             services.AddScoped(typeof(IRepository<>), (typeof(Repository<>)));
+            services.AddScoped<IBasketRepository, BasketRepository >();
             services.AddAutoMapper(typeof(MappingProfiles));
 
             services.Configure<ApiBehaviorOptions>(options =>

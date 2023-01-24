@@ -4,11 +4,10 @@
 
 export const environment = {
   production: false,
-  BaseApiUrl: 'https://localhost:5001/api/',
+  BaseApiUrl: 'http://localhost:5001/api/',
   productsEndpoint: 'products',
   BrandsEndpoint: 'products/brands',
   TypesEndpoint: 'products/types',
-
 };
 
 /*
