@@ -1,4 +1,7 @@
+using Core.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
@@ -10,13 +13,20 @@ public class Program
         var host = CreateHostBuilder(args).Build();
         using (var score = host.Services.CreateScope())
         {
-            var Services = score.ServiceProvider;
-            var loggerFactory = Services.GetRequiredService<ILoggerFactory>();
+            var services = score.ServiceProvider;
+            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
             try
             {
-                var context = Services.GetRequiredService<StoreContext>();
+                //seed data for products
+                var context = services.GetRequiredService<StoreContext>();
                 await context.Database.MigrateAsync();
                 await new StoreContextSeed().SeedJsonAsync(context, loggerFactory);
+                //seed data for identity
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+                await identityContext.Database.MigrateAsync();
+                await AppidentityDbContextSeed.SeedUsersAsync(userManager);
+
             }
             catch (Exception ex)
             {

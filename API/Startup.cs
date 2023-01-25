@@ -1,6 +1,7 @@
 using API.Extensions;
 using API.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -18,20 +19,24 @@ public class Startup
     {
         services.AddControllers();
 
+        //Conection to database default
+        services.AddDbContext<StoreContext>(
+            options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+        );
+        //conection to identity database
+        services.AddDbContext<AppIdentityDbContext>(o => {
+            o.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"));
+        });
+        //conection to redis
         services.AddSingleton<IConnectionMultiplexer>(c =>
         {
-            var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);         
+            var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);
             return ConnectionMultiplexer.Connect(configuration);
         });
 
         services.AddApplicationServices();
-
-        //Entity Framework
-        services.AddDbContext<StoreContext>(
-            options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-        );
+        services.AddIdentityServices();
         services.AddSwaggerDocumentation();
-
         services.AddCors(options =>
         {
             options.AddPolicy("CorsPolicy", policy =>
