@@ -47,6 +47,7 @@ namespace API.Extensions
 
             //Repository
             services.AddScoped(typeof(IRepository<>), (typeof(Repository<>)));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBasketRepository, BasketRepository >();
             
             //Handling Errors
