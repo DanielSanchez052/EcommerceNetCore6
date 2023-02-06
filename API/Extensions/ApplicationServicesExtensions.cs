@@ -6,18 +6,50 @@ using API.Errors;
 using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
 
 namespace API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        { 
-            services.AddScoped(typeof(IRepository<>), (typeof(Repository<>)));
-            services.AddScoped<IBasketRepository, BasketRepository >();
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+        {
+            //AutoMapper
             services.AddAutoMapper(typeof(MappingProfiles));
 
+            //Conection to database default
+            services.AddDbContext<StoreContext>(
+                options => options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+            );
+            
+            //conection to redis
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+
+            //Cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(
+                        "https://localhost:4200",
+                        "http://localhost:4200"
+                        );
+                });
+            });
+
+            //Repository
+            services.AddScoped(typeof(IRepository<>), (typeof(Repository<>)));
+            services.AddScoped<IBasketRepository, BasketRepository >();
+            
+            //Handling Errors
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionsContext =>
