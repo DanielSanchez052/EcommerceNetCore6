@@ -7,6 +7,7 @@ using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Identity;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ namespace API.Extensions
 
             //Conection to database default
             services.AddDbContext<StoreContext>(
-                options => options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+                options => options.UseSqlite(config.GetConnectionString("DefaultConnection"))
             );
             
             //conection to redis
@@ -45,6 +46,8 @@ namespace API.Extensions
                 });
             });
 
+            //jwt
+            services.AddScoped<ITokenService, TokenService>();
             //Repository
             services.AddScoped(typeof(IRepository<>), (typeof(Repository<>)));
             services.AddScoped<IUnitOfWork, UnitOfWork>();

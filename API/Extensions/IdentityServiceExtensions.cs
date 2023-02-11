@@ -2,6 +2,7 @@
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +15,7 @@ namespace API.Extensions
         {
             //conection to identity database
             services.AddDbContext<AppIdentityDbContext>(o => {
-                o.UseSqlServer(config.GetConnectionString("IdentityConnection"));
+                o.UseSqlite(config.GetConnectionString("IdentityConnection"));
             });
 
             //Identity Configuration
