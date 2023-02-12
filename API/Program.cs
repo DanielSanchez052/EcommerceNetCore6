@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 //services
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -21,23 +20,22 @@ var app = builder.Build();
 // http request pipeline
 app.UseMiddleware<ExcepcionMiddleware>();
 
+app.UseRouting();
+app.UseStaticFiles();
+app.UseCors("CorsPolicy");
+app.UseAuthorization();
+
 app.UseSwaggerDocumentation();
 
-app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
-app.UseStaticFiles();
+app.MapControllers();
 
-app.UseCors("CorsPolicy");
-
-app.UseAuthorization();
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 using var scope = app.Services.CreateScope();
-
 var services = scope.ServiceProvider;
-
 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
 try
