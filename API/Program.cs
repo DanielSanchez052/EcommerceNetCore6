@@ -29,8 +29,6 @@ app.UseAuthorization();
 
 app.UseSwaggerDocumentation();
 
-
-
 app.UseHttpsRedirection();
 
 app.MapControllers();
