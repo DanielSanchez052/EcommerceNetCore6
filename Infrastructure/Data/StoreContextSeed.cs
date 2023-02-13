@@ -1,6 +1,7 @@
 
 using System.Text.Json;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using EFCore.BulkExtensions;
 using Microsoft.Extensions.Logging;
 
@@ -29,6 +30,7 @@ namespace Infrastructure.Data
                     var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
                     await context.BulkInsertAsync(types);
                 }
+
                 if (!context.Product.Any())
                 {
                     var ProductData =
@@ -36,6 +38,15 @@ namespace Infrastructure.Data
 
                     var products = JsonSerializer.Deserialize<List<Product>>(ProductData);
                     await context.BulkInsertAsync(products);
+                }
+
+                if (!context.DeliveryMethods.Any())
+                {
+                    var deliveryData =
+                        File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+
+                    var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryData);
+                    await context.BulkInsertAsync(deliveryMethods);
                 }
             }
             catch (Exception ex)
